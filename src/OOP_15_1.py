@@ -9,6 +9,7 @@ class Product:
         self.description = description
         self.__price = price
         self.quantity = quantity
+        self.mul = self.__price * self.quantity
 
     @property
     def price(self):
@@ -30,9 +31,11 @@ class Product:
             quantity=data.get("quantity"),
         )
 
-    # @classmethod
-    # def new_product(cls, name, description, price, quantity):
-    #     return cls(name, description, price, quantity)
+    def __str__(self):
+        return f"{self.name}, {self.price} руб. Остаток: {self.quantity} шт."
+
+    def __add__(self, other):
+        return self.mul + other.mul
 
 
 class Category:
@@ -58,12 +61,22 @@ class Category:
         else:
             raise TypeError("Можно добавлять только объекты класса Product")
 
+    def __str__(self):
+        quantity_all = 0
+        for product in self.__products:
+            quantity_all += product.quantity
+        return f"{self.name}, количество продуктов: {quantity_all} шт."
+
     @property
     def products(self):
-        products_str = ""
-        for product in self.__products:
-            products_str += f"{product.name}, {product.price} руб. Остаток: {product.quantity} шт.\n"
-        return products_str.strip()
+        return "\n".join(str(product) for product in self.__products)
+
+    # @property
+    # def products(self):
+    #     products_str = ""
+    #     for product in self.__products:
+    #         products_str += f"{product.name}, {product.price} руб. Остаток: {product.quantity} шт.\n"
+    #     return products_str.strip()
 
     @property
     def products_in_list(self):
