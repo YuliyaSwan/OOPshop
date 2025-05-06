@@ -1,6 +1,6 @@
 import pytest
 
-from src.OOP_14_2 import Category, Product
+from src.OOP_15_1 import Category, Product
 
 
 @pytest.fixture
@@ -52,6 +52,7 @@ def test_init(product1):
     assert product1.description == "256GB, Серый цвет, 200MP камера"
     assert product1.price == 180000.0
     assert product1.quantity == 5
+    assert product1.mul == 900000.0
 
 
 def test_product_price_setter(product1):
@@ -85,6 +86,25 @@ def test_product_new_product():
     assert product.description == "256GB, Серый цвет, 200MP камера"
     assert product.price == 180000.0
     assert product.quantity == 5
+
+
+def test_product_str(product1):
+    assert str(product1) == "Samsung Galaxy S23 Ultra, 180000.0 руб. Остаток: 5 шт."
+
+
+def test_product_addition_1_2(product1, product2):
+    total_value = product1.mul + product2.mul
+    assert total_value == 2580000.0
+
+
+def test_product_addition_1_3(product1, product3):
+    total_value = product1.mul + product3.mul
+    assert total_value == 1334000.0
+
+
+def test_product_addition_2_3(product2, product3):
+    total_value = product2.mul + product3.mul
+    assert total_value == 2114000.0
 
 
 def test_init_cat(category1):
@@ -124,3 +144,17 @@ def test_category_products_in_list(category1):
     result = category1.products_in_list
     assert isinstance(result, list)
     assert all(isinstance(product, Product) for product in result)
+
+
+def test_category_str(category1):
+    # Общий остаток: 5 + 8 + 14 = 27
+    assert str(category1) == "Смартфоны, количество продуктов: 27 шт."
+
+
+def test_category_products_output(category1):
+    expected_output = (
+        "Samsung Galaxy S23 Ultra, 180000.0 руб. Остаток: 5 шт.\n"
+        "Iphone 15, 210000.0 руб. Остаток: 8 шт.\n"
+        "Xiaomi Redmi Note 11, 31000.0 руб. Остаток: 14 шт."
+    )
+    assert category1.products == expected_output
