@@ -1,6 +1,6 @@
 import pytest
 
-from src.OOP_16_1 import Category, LawnGrass, Product, Smartphone
+from src.OOP_16_2 import BaseProduct, Category, LawnGrass, Product, Smartphone
 
 
 @pytest.fixture
@@ -126,19 +126,23 @@ def test_product_new_product():
     assert product.quantity == 5
 
 
-def test_product_addition_1_2(product1, product2):
-    total_value = product1.mul + product2.mul
-    assert total_value == 2580000.0
+def test_add_products_total_mul(product1, product2):
+    assert product1 + product2 == product1.mul + product2.mul
 
 
-def test_product_addition_1_3(product1, product3):
-    total_value = product1.mul + product3.mul
-    assert total_value == 1334000.0
-
-
-def test_product_addition_2_3(product2, product3):
-    total_value = product2.mul + product3.mul
-    assert total_value == 2114000.0
+# def test_product_addition_1_2(product1, product2):
+#     total_value = product1.mul + product2.mul
+#     assert total_value == 2580000.0
+#
+#
+# def test_product_addition_1_3(product1, product3):
+#     total_value = product1.mul + product3.mul
+#     assert total_value == 1334000.0
+#
+#
+# def test_product_addition_2_3(product2, product3):
+#     total_value = product2.mul + product3.mul
+#     assert total_value == 2114000.0
 
 
 def test_product_addition(smartphone1, smartphone2):
@@ -151,9 +155,17 @@ def test_lawngrass_addition(grass1, grass2):
     assert total == grass1.price + grass2.price
 
 
-def test_invalid_addition_type(smartphone1, grass1):
-    with pytest.raises(TypeError):
+def test_invalid_addition_lawngrass_and_smartphone(smartphone1, grass1):
+    with pytest.raises(TypeError, match="Складывать можно только объекты LawnGrass."):
+        grass1 + smartphone1
+
+    with pytest.raises(TypeError, match="Складывать можно только объекты Smartphone."):
         smartphone1 + grass1
+
+
+# def test_invalid_addition_type(smartphone1, grass1):
+#     with pytest.raises(TypeError):
+#         smartphone1 + grass1
 
 
 def test_add_valid_and_invalid_product(smartphone1, smartphone2, smartphone3, grass1, grass2):
@@ -199,6 +211,45 @@ def test_init_grass(grass1):
     assert grass1.color == "Зеленый"
 
 
+def test_product_is_instance_of_base():
+    product = Product("Samsung Galaxy S23 Ultra", "256GB, Серый цвет, 200MP камера", 180000.0, 5)
+    assert isinstance(product, BaseProduct)
+
+
+def test_smartphone_is_instance_of_base():
+    smartphone = Smartphone("Iphone 15", "512GB, Gray space", 210000.0, 8, 98.2, "15", 512, "Gray space")
+    assert isinstance(smartphone, BaseProduct)
+
+
+def test_lawngrass_is_instance_of_base():
+    grass = LawnGrass("Газонная трава", "Элитная трава для газона", 500.0, 20, "Россия", "7 дней", "Зеленый")
+    assert isinstance(grass, BaseProduct)
+
+
+def test_product_implements_required_methods():
+    product = Product("Samsung Galaxy S23 Ultra", "256GB, Серый цвет, 200MP камера", 180000.0, 5)
+    assert callable(product.__str__)
+    assert callable(product.__add__)
+    assert callable(product.new_product)
+
+
+def test_printmixin_repr():
+    product = Product("Samsung Galaxy S23 Ultra", "256GB, Серый цвет, 200MP камера", 180000.0, 5)
+    expected_repr = "Product, (Samsung Galaxy S23 Ultra, 256GB, Серый цвет, 200MP камера, 180000.0, 5)"
+    assert repr(product) == expected_repr
+
+
+def test_printmixin_output_on_init(capfd):
+    Product("Samsung Galaxy S23 Ultra", "256GB, Серый цвет, 200MP камера", 180000.0, 5)
+    captured = capfd.readouterr()
+    assert "Product, (Samsung Galaxy S23 Ultra, 256GB, Серый цвет, 200MP камера, 180000.0, 5)" in captured.out
+
+
+def test_product_repr_contains_class_name(product1):
+    assert product1.__class__.__name__ in repr(product1)
+
+
+# Тесты для класса Категория
 def test_init_cat(category1):
     assert category1.name == "Смартфоны"
     assert (
@@ -235,3 +286,8 @@ def test_category_products_output(category1):
         "Xiaomi Redmi Note 11, 31000.0 руб. Остаток: 14 шт."
     )
     assert category1.products == expected_output
+
+
+def test_category_str_total_quantity(category1):
+    # Количество: 5 + 8 + 14 = 27
+    assert str(category1) == "Смартфоны, количество продуктов: 27 шт."
