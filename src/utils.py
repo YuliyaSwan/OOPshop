@@ -1,7 +1,7 @@
 import json
 import os
 
-from src.OOP_16_2 import Category, Product
+from src.OOP_17_1 import Category, Product
 
 
 def load_products(file_path: str):
