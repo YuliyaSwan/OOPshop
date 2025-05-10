@@ -36,6 +36,8 @@ class Product(PrintMixin, BaseProduct):
         self.description = description
         self.__price = price
         self.quantity = quantity
+        if quantity == 0:
+            raise ValueError("Товар с нулевым количеством не может быть добавлен.")
         self.mul = self.__price * self.quantity
         super().__init__()
 
@@ -136,3 +138,9 @@ class Category:
     @property
     def products_in_list(self):
         return self.__products
+
+    def middle_price(self):
+        try:
+            return round(sum([product.price for product in self.__products]) / len(self.__products))
+        except ZeroDivisionError:
+            return 0

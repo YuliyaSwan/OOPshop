@@ -1,6 +1,6 @@
 import pytest
 
-from src.OOP_16_2 import BaseProduct, Category, LawnGrass, Product, Smartphone
+from src.OOP_17_1 import BaseProduct, Category, LawnGrass, Product, Smartphone
 
 
 @pytest.fixture
@@ -249,6 +249,11 @@ def test_product_repr_contains_class_name(product1):
     assert product1.__class__.__name__ in repr(product1)
 
 
+def test_product_zero_quantity_raises_valueerror():
+    with pytest.raises(ValueError, match="Товар с нулевым количеством не может быть добавлен."):
+        Product("Бракованный товар", "Неверное количество", 1000.0, 0)
+
+
 # Тесты для класса Категория
 def test_init_cat(category1):
     assert category1.name == "Смартфоны"
@@ -291,3 +296,12 @@ def test_category_products_output(category1):
 def test_category_str_total_quantity(category1):
     # Количество: 5 + 8 + 14 = 27
     assert str(category1) == "Смартфоны, количество продуктов: 27 шт."
+
+
+def test_middle_price(category1):
+    assert category1.middle_price() == round((180000.0 + 210000.0 + 31000.0) / 3)
+
+
+def test_middle_price_empty_category():
+    category_empty = Category("Пустая категория", "Категория без продуктов", [])
+    assert category_empty.middle_price() == 0
